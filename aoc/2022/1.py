@@ -1,10 +1,11 @@
 import numpy as np
 
-def main(data):
-    data = data.split("\n")
-    is_sep = np.array([len(i)==0 for i in data])
+
+def main(data_str):
+    data = np.fromstring(data_str.replace("\n\n","\n-1\n"),dtype=np.int32,sep="\n")
+    is_sep = data<0
     elf_index = np.cumsum(is_sep)[~is_sep]
-    data = np.array([int(i) for i in data if len(i)])
+    data = data[~is_sep]
 
     selector = data[None,:]*(np.arange(elf_index.max()+1)[:,None]==elf_index[None,:])
     elf_total = selector.sum(1)
