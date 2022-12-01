@@ -8,5 +8,6 @@ def main(data):
 
     selector = data[None,:]*(np.arange(elf_index.max()+1)[:,None]==elf_index[None,:])
     elf_total = selector.sum(1)
-    res = np.argmax(elf_total)+1
-    return res
+    res1 = elf_total.max()
+    res2 = np.sort(elf_total)[-3:].sum()
+    return res1,res2
