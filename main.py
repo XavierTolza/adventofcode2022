@@ -1,6 +1,6 @@
 from importlib import import_module
 from os import getenv, listdir, makedirs
-from os.path import dirname, isdir, join,isfile
+from os.path import dirname, isdir, isfile, join
 
 from aocd import get_data
 
@@ -8,8 +8,8 @@ session = getenv("AOC_SESSION")
 
 result_path="results"
 
-for year in listdir(path='aoc'):
-    for dayfile in listdir(path=join("aoc",year)):
+for year in listdir(path='aoc')[::-1]:
+    for dayfile in listdir(path=join("aoc",year))[::-1]:
         if not isfile(join("aoc",year,dayfile)):
             continue
         day = int(dayfile.split(".")[0])
