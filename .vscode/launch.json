@@ -13,6 +13,18 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "env": {"AOC_SESSION":"53616c7465645f5fbcf257664358d04dcb6c02958be9a92e5d823048ed093813608aa8a3471dce304d6a0eeaeca65e187eb891239970fdf74c4a755d4e897d08"}
+        },
+        {
+            "name": "Demo data",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "AOC_SESSION":"53616c7465645f5fbcf257664358d04dcb6c02958be9a92e5d823048ed093813608aa8a3471dce304d6a0eeaeca65e187eb891239970fdf74c4a755d4e897d08",
+                "RUN_DEMO": "True"
+            }
         }
     ]
 }

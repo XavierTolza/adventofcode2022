@@ -1,5 +1,11 @@
 import numpy as np
 
+demo_data = """A Y
+B X
+C Z"""
+
+demo_result = (15, 12)
+
 
 def compute_score(opponent, me):
     is_draw = opponent == me
@@ -14,9 +20,9 @@ def compute_score(opponent, me):
 
 
 def main(data_str):
-#     data_str = """A Y
-# B X
-# C Z"""
+    #     data_str = """A Y
+    # B X
+    # C Z"""
     # Convert data to numpy array of ints
     data = np.reshape(list(bytes(data_str.replace("\n", "").encode("utf-8"))), (-1, 3))[
         :, [0, -1]
