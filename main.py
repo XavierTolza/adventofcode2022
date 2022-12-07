@@ -16,7 +16,7 @@ for year in listdir(path='aoc')[::-1]:
         day = int(dayfile.split(".")[0])
         mod = import_module(f"aoc.{year}.{day}", package=None)
         method = mod.main
-        
+
         if run_demo:
             # Run on demo data is any
             data = mod.demo_data
