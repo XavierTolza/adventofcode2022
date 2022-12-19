@@ -1,3 +1,5 @@
 venv
 results
 *.pyc
+*.pdf
+*.svg
