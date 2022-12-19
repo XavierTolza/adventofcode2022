@@ -3,52 +3,105 @@ from typing import Callable, List
 from graphviz import Digraph
 
 
-def all_paths(graph: List[List[int]], breadth_first: bool = True) -> List[List[int]]:
-    """Generate all possible paths in a graph using a breadth-first or depth-first search.
-
-    Parameters:
-    graph (List[List[int]]): The adjacency matrix representation of the graph.
-    breadth_first (bool, optional): Whether to perform a breadth-first or depth-first search. Defaults to True.
-
-    Returns:
-    List[List[int]]: A list of lists representing the paths in the graph.
+def dfs_paths(graph, start: int = 0, path=[]):
     """
-    # Initialize the queue or stack for the search
-    queue = [[0]] if breadth_first else [[0]][::-1]
-    # Initialize a set to store the visited nodes
-    visited = set()
-    # Initialize a list to store the paths
+    Find all paths in a graph using depth-first search.
+
+    Parameters
+    ----------
+    graph : numpy.ndarray
+        A square matrix representing the graph, where each element graph[i, j] represents the weight
+        of the edge between the vertices i and j. The vertices are represented by integers, starting
+        from 0.
+    start : int
+        The starting vertex for the search.
+    path : list, optional
+        The current path being explored, by default an empty list.
+
+    Returns
+    -------
+    list of list of int
+        A list of lists, where each inner list represents a path in the graph.
+
+    """
+
+    # add the current vertex to the path
+    path = path + [start]
+
+    # initialize the list of paths
     paths = []
 
-    # Perform the search
-    while queue:
-        # Get the next path from the queue or stack
-        path = queue.pop(0) if breadth_first else queue.pop()
-        # Get the last node in the path
-        node = path[-1]
-        # If the node has not been visited yet
-        if node not in visited:
-            # Mark the node as visited
-            visited.add(node)
-            # Add the path to the list of paths
-            paths.append(path)
-            # Add all the neighbors of the node to the queue or stack
-            for i, weight in enumerate(graph[node]):
-                if weight != 0:
-                    new_path = path.copy()
-                    new_path.append(i)
-                    queue.append(new_path) if breadth_first else queue.insert(
-                        0, new_path
-                    )
+    # explore all the vertices that can be reached from the current vertex
+    for vertex in range(graph.shape[0]):
+        # if there is an edge between the current vertex and the vertex being explored
+        if graph[start, vertex] != 0:
+            # if the vertex has not been visited yet
+            if vertex not in path:
+                # find the paths starting from the vertex being explored
+                extended_paths = dfs_paths(graph, vertex, path)
+                # add the extended paths to the list of paths
+                for p in extended_paths:
+                    paths.append(p)
+                paths.append(path)
 
+    # return the list of paths
+    return paths
+
+
+def bfs_paths(graph, start):
+    """
+    Find all paths in a graph using breadth-first search.
+
+    Parameters
+    ----------
+    graph : numpy.ndarray
+        A square matrix representing the graph, where each element graph[i, j] represents the weight
+        of the edge between the vertices i and j. The vertices are represented by integers, starting
+        from 0.
+    start : int
+        The starting vertex for the search.
+
+    Returns
+    -------
+    list of list of int
+        A list of lists, where each inner list represents a path in the graph.
+
+    """
+
+    # initialize the queue with the starting vertex
+    queue = [[start]]
+
+    # initialize the list of paths
+    paths = []
+
+    # while the queue is not empty
+    while queue:
+        # get the first path in the queue
+        path = queue.pop(0)
+        # get the last vertex in the path
+        vertex = path[-1]
+        # explore all the vertices that can be reached from the current vertex
+        for next_vertex in range(graph.shape[0]):
+            # if there is an edge between the current vertex and the vertex being explored
+            if graph[vertex, next_vertex] != 0:
+                # create a new path by extending the current path with the vertex being explored
+                new_path = path + [next_vertex]
+                # if the vertex has not been visited yet
+                if next_vertex not in path:
+                    # add the new path to the list of paths
+                    paths.append(new_path)
+                    # add the new path to the queue
+                    queue.append(new_path)
+
+    # return the list of paths
     return paths
 
 
 def minimum_cost_path(
     graph: List[List[int]],
     max_length: int,
-    path_length: Callable[List[int], float],
-    path_cost: Callable[List[int], float],
+    path_length: Callable[[List[int]], float],
+    path_cost: Callable[[List[int]], float],
     **kwargs
 ) -> List[int]:
     # Initialize the minimum cost path to be empty
@@ -57,7 +110,7 @@ def minimum_cost_path(
     min_cost = float("inf")
 
     # Iterate over all possible paths in the graph
-    for path in all_paths(graph, **kwargs):
+    for path in dfs_paths(graph, **kwargs):
         # Calculate the length of the path
         length = path_length(path)
         # If the length of the path exceeds the maximum length, skip it
