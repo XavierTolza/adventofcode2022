@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Build",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/setup.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": ["build_ext","--inplace"]
+        },
+        {
             "name": "Main",
             "type": "python",
             "request": "launch",

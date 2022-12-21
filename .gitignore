@@ -3,3 +3,6 @@ results
 *.pyc
 *.pdf
 *.svg
+*.o
+*.cpp
+!c_*.cpp
