@@ -34,9 +34,8 @@ class Graph
 private:
     graph_t graph;
     queue_t queue;
-    visited_t visited;
     node_index_t start_node;
-
+    
     void set_graph(graph_t graph, node_index_t start_node);
 
 public:
@@ -45,5 +44,4 @@ public:
     void reset(void);
 
     path_t get_next_path_bft();
-    path_t get_next_path_dft();
 };

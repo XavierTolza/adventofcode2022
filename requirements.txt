@@ -2,3 +2,5 @@ advent-of-code-data
 numpy
 Cython
 graphviz
+Cython
+pytest

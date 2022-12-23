@@ -1,4 +1,6 @@
 # distutils: language = c++
+# distutils: sources = tools/graphs/c_graphs.cpp
+# distutils: include_dirs = tools/graphs
 
 from libcpp.vector cimport vector
 from libcpp.set cimport set
@@ -30,9 +32,9 @@ cdef extern from "c_graphs.h":
     cdef cppclass Graph:
         Graph(graph_t graph, node_index_t start_node)
         Graph(adjency_matrix_t adj_matrix, node_index_t start_node)
-        void reset()
-        path_t get_next_path_bft()
-        path_t get_next_path_dft()
+        void reset() nogil
+        path_t get_next_path_bft() nogil
+        path_t get_next_path_dft() nogil
 
 # Define a Python wrapper class for the C++ Graph class
 cdef class PyGraph:
@@ -40,12 +42,33 @@ cdef class PyGraph:
 
     def __cinit__(self, adj_matrix: np.ndarray, start_node: int=0):
         self.c_graph = new Graph(<adjency_matrix_t>adj_matrix, <node_index_t>start_node)
-
-    def reset(self):
+    
+    def iter_paths_bft(self) -> list:
         self.c_graph.reset()
+        while True:
+            path = self.c_graph.get_next_path_bft()
+            if len(path)==0:
+                self.c_graph.reset()
+                break
+            yield path
 
-    def get_next_path_bft(self) -> list:
-        return self.c_graph.get_next_path_bft()
-
-    def get_next_path_dft(self) -> list:
-        return self.c_graph.get_next_path_dft()
+    def iter_paths_by_length(self, as_numpy_array:bool=False)->list:
+        cdef vector[path_t] res
+        with nogil:
+            while True:
+                path = self.c_graph.get_next_path_bft()
+                if path.size()==0:
+                    with gil:
+                        if as_numpy_array:
+                            yield np.array(res)
+                        else:
+                            yield res
+                    break
+                if res.size()>0 and path.size()!=res.back().size():
+                    with gil:
+                        if as_numpy_array:
+                            yield np.array(res)
+                        else:
+                            yield res
+                    res.clear()
+                res.push_back(path)

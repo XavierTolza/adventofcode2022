@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug tests with C++",
+            "type": "pythoncpp",
+            "request": "launch",
+            "pythonConfig": "custom",
+            "pythonLaunchName": "Tests",
+            "cppConfig": "default (gdb) Attach",
+            "preLaunchTask": "build"
+        },
+        {
             "name": "Tests",
             "type": "python",
             "request": "launch",
@@ -12,7 +21,8 @@
             "justMyCode": false,
             "args": [
                 "tests"
-            ]
+            ],
+            "preLaunchTask": "build"
         },
         {
             "name": "Build C++ extensions",

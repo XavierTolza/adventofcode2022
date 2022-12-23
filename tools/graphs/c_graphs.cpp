@@ -19,10 +19,10 @@ Graph::Graph(adjency_matrix_t adj_matrix, node_index_t start_node)
   const size_t num_nodes = adj_matrix.size();
   graph_t graph;
   graph.resize(num_nodes);
-  for (node_index_t i = 0; i < num_nodes; ++i)
+  for (node_index_t i = 0; i < num_nodes; i++)
   {
     graph[i].index = i;
-    for (node_index_t j = 0; j < num_nodes; ++j)
+    for (node_index_t j = 0; j < num_nodes; j++)
     {
       if (adj_matrix[i][j] != 0)
       {
@@ -33,65 +33,50 @@ Graph::Graph(adjency_matrix_t adj_matrix, node_index_t start_node)
   set_graph(graph, start_node);
 }
 
-void Graph::reset()
+void Graph::reset(void)
 {
-  queue.clear();
-  visited.clear();
-  queue.push_back({this->start_node});
+    // Clear the queue and visited set
+    queue.clear();
+
+    // Add the start node to the queue as a single-node path
+    path_t start_path = { start_node };
+    queue.push_back(start_path);
 }
 
 path_t Graph::get_next_path_bft()
 {
-  node_t node;
-  node_index_t node_index;
-  path_t res;
-  path_t path;
-
-  // Find the next nodes
-  std::vector<link_t>::iterator it;
-  link_t link;
-  do
-  {
-    path = queue.front();
-    node_index = path.back();
-    node = graph.at(node_index);
-
-    for (it = node.links.begin(); it != node.links.end(); it++)
+    // If the queue is empty, return an empty path
+    if (queue.empty())
     {
-      link = *it;
-      if (visited.count(link.node->index) == 0)
-      {
-        // We found next node to seek
-        res = path_t(path);
-        res.push_back(node_index);
-        visited.insert(node_index);
-        return res;
-      }
-      queue.pop_front();
+        return path_t();
     }
-  } while (!queue.empty());
-  return {};
-}
 
-path_t Graph::get_next_path_dft()
-{
-  reset();
-  std::vector<node_index_t> stack;
-  stack.push_back(start_node);
-  while (!stack.empty())
-  {
-    node_index_t node_index = stack.back();
-    stack.pop_back();
-    node_t node = graph[node_index];
-    if (visited.count(node.index) > 0)
-      continue;
-    visited.insert(node.index);
-    for (const link_t &link : node.links)
+    // Get the next path from the queue
+    path_t next_path = queue.front();
+    visited_t visited = visited_t(next_path.begin(),next_path.end());
+    queue.pop_front();
+
+    // Get the last node in the path
+    node_index_t last_node_index = next_path.back();
+    node_t& last_node = graph[last_node_index];
+
+    // Iterate through the links of the last node
+    for (const auto& link : last_node.links)
     {
-      if (visited.count(link.node->index) > 0)
-        continue;
-      stack.push_back(link.node->index);
+        // If the linked node has not been visited
+        if (visited.find(link.node->index) == visited.end())
+        {
+            // Mark the linked node as visited
+            visited.insert(link.node->index);
+
+            // Create a new path by appending the linked node to the current path
+            path_t new_path = next_path;
+            new_path.push_back(link.node->index);
+
+            // Add the new path to the queue
+            queue.push_back(new_path);
+        }
     }
-  }
-  return {}; // Return an empty path if no more paths are found
+
+    return next_path;
 }
