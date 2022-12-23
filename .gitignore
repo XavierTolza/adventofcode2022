@@ -6,3 +6,7 @@ results
 *.o
 *.cpp
 !c_*.cpp
+build
+dist
+*.pyd
+*.so

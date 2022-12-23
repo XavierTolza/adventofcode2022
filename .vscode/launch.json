@@ -5,13 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Build",
+            "name": "Build C++ extensions",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/setup.py",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "args": ["build_ext","--inplace"]
+            "args": [
+                "build_ext",
+                "--inplace"
+            ]
         },
         {
             "name": "Main",
