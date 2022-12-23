@@ -35,13 +35,17 @@ cdef extern from "c_graphs.h":
         void reset() nogil
         path_t get_next_path_bft() nogil
         path_t get_next_path_dft() nogil
+        vector[vector[size_t]] floyd_warshall();
+        
 
 # Define a Python wrapper class for the C++ Graph class
 cdef class PyGraph:
     cdef Graph *c_graph
+    cdef char is_directive
 
     def __cinit__(self, adj_matrix: np.ndarray, start_node: int=0):
         self.c_graph = new Graph(<adjency_matrix_t>adj_matrix, <node_index_t>start_node)
+        self.is_directive = not np.all(np.transpose(adj_matrix)==adj_matrix)
     
     def iter_paths_bft(self) -> list:
         self.c_graph.reset()
@@ -72,3 +76,10 @@ cdef class PyGraph:
                             yield res
                     res.clear()
                 res.push_back(path)
+
+    def floyd_warshall(self)->np.ndarray:
+        if self.is_directive:
+            raise ValueError("floyd_warshall does not support directive graphs")
+        return np.array(self.c_graph.floyd_warshall())
+
+    min_distance_between_two_nodes = floyd_warshall

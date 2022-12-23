@@ -35,7 +35,7 @@ private:
     graph_t graph;
     queue_t queue;
     node_index_t start_node;
-    
+
     void set_graph(graph_t graph, node_index_t start_node);
 
 public:
@@ -44,4 +44,5 @@ public:
     void reset(void);
 
     path_t get_next_path_bft();
+    std::vector<std::vector<size_t>> floyd_warshall();
 };

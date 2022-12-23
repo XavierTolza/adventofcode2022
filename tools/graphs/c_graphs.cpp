@@ -80,3 +80,33 @@ path_t Graph::get_next_path_bft()
 
     return next_path;
 }
+
+
+std::vector<std::vector<size_t>> Graph::floyd_warshall()
+{
+    // Initialize the distance matrix with the weights of the links
+    size_t num_nodes = graph.size();
+    std::vector<std::vector<size_t>> distance(num_nodes, std::vector<size_t>(num_nodes, std::numeric_limits<size_t>::max()));
+    for (size_t i = 0; i < num_nodes; i++)
+    {
+        distance[i][i] = 0;
+        for (const link_t& link : graph[i].links)
+        {
+            distance[i][link.node->index] = link.weight;
+        }
+    }
+
+    // Perform the Floyd-Warshall algorithm
+    for (size_t k = 0; k < num_nodes; k++)
+    {
+        for (size_t i = 0; i < num_nodes; i++)
+        {
+            for (size_t j = 0; j < num_nodes; j++)
+            {
+                distance[i][j] = std::min(distance[i][j], distance[i][k] + distance[k][j]);
+            }
+        }
+    }
+
+    return distance;
+}
