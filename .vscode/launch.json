@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Tests",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "justMyCode": false,
+            "args": [
+                "tests"
+            ]
+        },
+        {
             "name": "Build C++ extensions",
             "type": "python",
             "request": "launch",

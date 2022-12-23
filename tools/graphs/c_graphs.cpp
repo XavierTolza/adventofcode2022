@@ -1,4 +1,4 @@
-#include "c_graphs.h.h"
+#include "c_graphs.h"
 #include <algorithm>
 #include <queue>
 
@@ -37,32 +37,40 @@ void Graph::reset()
 {
   queue.clear();
   visited.clear();
-  queue.push_back(this->start_node);
+  queue.push_back({this->start_node});
 }
 
 path_t Graph::get_next_path_bft()
 {
-  if (!queue.empty())
+  node_t node;
+  node_index_t node_index;
+  path_t res;
+  path_t path;
+
+  // Find the next nodes
+  std::vector<link_t>::iterator it;
+  link_t link;
+  do
   {
-    path_t path = queue.front();
-    queue.pop_front();
-    node_t node = graph[path.back()];
-    if (visited.count(node.index) > 0)
-      continue;
-    visited.insert(node.index);
-    for (const link_t &link : node.links)
+    path = queue.front();
+    node_index = path.back();
+    node = graph.at(node_index);
+
+    for (it = node.links.begin(); it != node.links.end(); it++)
     {
-      if (visited.count(link.node->index) > 0)
-        continue;
-      path_t new_path(path);
-      new_path.push_back(link.node->index);
-      queue.push_back(new_path);
+      link = *it;
+      if (visited.count(link.node->index) == 0)
+      {
+        // We found next node to seek
+        res = path_t(path);
+        res.push_back(node_index);
+        visited.insert(node_index);
+        return res;
+      }
+      queue.pop_front();
     }
-  }
-  else
-  {
-    return {}; // Return an empty path if no more paths are found
-  }
+  } while (!queue.empty());
+  return {};
 }
 
 path_t Graph::get_next_path_dft()

@@ -1,6 +1,7 @@
 #include <vector>
 #include <stdint.h>
 #include <set>
+#include <deque>
 
 typedef size_t node_index_t;
 typedef uint32_t weight_t;
@@ -17,7 +18,7 @@ typedef struct _node_t
     std::vector<link_t> links;
 } node_t;
 typedef std::vector<node_index_t> path_t;
-typedef std::vector<path_t> queue_t;
+typedef std::deque<path_t> queue_t;
 typedef std::set<node_index_t> visited_t;
 typedef std::vector<node_t> graph_t;
 typedef std::vector<std::vector<weight_t>> adjency_matrix_t;
