@@ -33,12 +33,28 @@ def test_get_path_by_length(g):
     expected_paths = [[[0]], [[0, 1], [0, 2]], [[0, 1, 3], [0, 2, 3]]]
     assert res==expected_paths
     
-def test_floyd_warshall(g,adj_matrix):
-    with pytest.raises(ValueError):
-        distance = g.floyd_warshall()
-    
-    m2 = adj_matrix+adj_matrix.T
-    print(m2)
-    g2 = PyGraph(m2,0)
-    distance = g2.floyd_warshall()
-    raise NotImplementedError
+
+def test_floyd_warshall():
+  test_cases = [
+    {
+      "adjacency_matrix": [[0, 1, 1],
+                           [1, 0, 1],
+                           [1, 1, 0]],
+      "expected": [[0, 1, 1],
+                   [1, 0, 1],
+                   [1, 1, 0]],
+    },{
+      "adjacency_matrix": [[0, 1, 1],
+                           [1, 0, 5],
+                           [1, 1, 0]],
+      "expected": [[0, 1, 1],
+                   [1, 0, 2],
+                   [1, 1, 0]],
+    }
+  ]
+  for i, test_case in enumerate(test_cases):
+    adjacency_matrix = test_case["adjacency_matrix"]
+    expected = test_case["expected"]
+    graph = PyGraph(adjacency_matrix)
+    result = graph.floyd_warshall()
+    assert np.all(result == expected)

@@ -35,7 +35,7 @@ cdef extern from "c_graphs.h":
         void reset() nogil
         path_t get_next_path_bft() nogil
         path_t get_next_path_dft() nogil
-        vector[vector[size_t]] floyd_warshall();
+        vector[vector[weight_t]] floyd_warshall();
         
 
 # Define a Python wrapper class for the C++ Graph class
@@ -78,8 +78,6 @@ cdef class PyGraph:
                 res.push_back(path)
 
     def floyd_warshall(self)->np.ndarray:
-        if self.is_directive:
-            raise ValueError("floyd_warshall does not support directive graphs")
         return np.array(self.c_graph.floyd_warshall())
 
     min_distance_between_two_nodes = floyd_warshall
