@@ -2,8 +2,7 @@ import re
 
 import numpy as np
 
-from tools.graphs import dfs_paths as all_paths
-from tools.graphs import floyd_warshall, minimum_cost_path
+from tools.graphs import PyGraph
 
 demo_data = """Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 Valve BB has flow rate=13; tunnels lead to valves CC, AA
@@ -26,7 +25,7 @@ matcher = re.compile(
 def parse(data_str):
     data = [[i[0], (i[1], i[2].split(", "))] for i in matcher.findall(data_str)]
     data = dict(data)
-    labels = list(data.keys())
+    labels = np.array(list(data.keys()))
     flows = np.array([int(i[0]) for i in data.values()])
     name2index = {k: i for k, i in zip(data.keys(), range(len(data)))}
     graph = np.zeros((len(labels),) * 2) + np.inf
@@ -41,30 +40,19 @@ def parse(data_str):
 
 def main(data_str):
     graph, labels, flows = parse(data_str)
+    N = len(flows)
     # generate_graph_svg(graph, [f"{i} ({f})" for i, f in zip(labels, flows)], "out.svg")
 
-    distances = np.array(floyd_warshall(graph)).astype(np.int)
+    distances = PyGraph(np.where(np.isinf(graph),0,graph.astype(int))).floyd_warshall()
 
-    def path_length(path):
-        path = np.array(path)
-        start_point = path[:-1]
-        stop_point = path[1:]
-        d = distances[start_point, stop_point]
-        res = d.sum() + len(path)
-        return res
+    flows_cheat = np.where(np.arange(N)==0,flows.max()*10,flows)
+    selector = np.arange(N)[(flows_cheat>0)[np.argsort(-flows_cheat)]]
 
-    def path_cost(path):
-        path = np.array(path)
-        start_point = path[:-1]
-        stop_point = path[1:]
-        d = distances[start_point, stop_point]
-        flow = flows[path]
-        res = flow.sum()
-        res2 = (np.cumsum(flow[:-1]) * d).sum()
-        res = res + res2
-        return -res
-
-    paths = all_paths(1 - np.eye(3))
-    res1 = minimum_cost_path(distances, 30, path_length, path_cost)
-
+    distances = distances[selector,:][:,selector]
+    labels = labels[selector]
+    flows = flows[selector]
+    
+    g = PyGraph(distances)
+    for paths in g.iter_paths_by_length():
+        raise NotImplementedError
     raise NotImplementedError

@@ -11,3 +11,4 @@ dist
 *.pyd
 *.so
 cython_debug
+.cache
